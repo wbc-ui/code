@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="WBCode">
+  <title>WBCode</title>
+  <defs>
+    <linearGradient id="wbcode-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#1a237e"/>
+      <stop offset="100%" stop-color="#311b92"/>
+    </linearGradient>
+    <linearGradient id="wbcode-spark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#b9f6ca"/>
+      <stop offset="100%" stop-color="#69f0ae"/>
+    </linearGradient>
+    <filter id="wbcode-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Rounded card background -->
+  <rect x="8" y="8" width="240" height="240" rx="48" ry="48" fill="url(#wbcode-bg)"/>
+  <!-- Subtle inner highlight -->
+  <rect x="8" y="8" width="240" height="120" rx="48" ry="48" fill="#ffffff" opacity="0.06"/>
+
+  <!-- Code tags <…/> -->
+  <g fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <!-- left angle  -->
+    <polyline points="96,90 56,128 96,166"/>
+    <!-- right angle -->
+    <polyline points="160,90 200,128 160,166"/>
+    <!-- slash       -->
+    <line x1="148" y1="78" x2="108" y2="178"/>
+  </g>
+
+  <!-- Spark (the "executable" hint) -->
+  <g filter="url(#wbcode-glow)">
+    <circle cx="206" cy="56" r="10" fill="url(#wbcode-spark)"/>
+    <path d="M206 38 v-12 M206 86 v12 M188 56 h-12 M224 56 h12 M194 44 l-8 -8 M218 68 l8 8 M194 68 l-8 8 M218 44 l8 -8"
+          stroke="#69f0ae" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  </g>
+</svg>
