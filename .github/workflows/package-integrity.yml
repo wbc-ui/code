@@ -1,0 +1,55 @@
+name: Package integrity
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-integrity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Verify manifest entry points
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+          const pkg = require('./package.json')
+          const paths = []
+          const collect = (value) => {
+            if (typeof value === 'string') {
+              paths.push(value.startsWith('./') ? value.slice(2) : value)
+              return
+            }
+            if (value && typeof value === 'object') {
+              for (const child of Object.values(value)) collect(child)
+            }
+          }
+          collect(pkg.main)
+          collect(pkg.module)
+          collect(pkg.types)
+          collect(pkg.typings)
+          collect(pkg.bin)
+          collect(pkg.exports)
+          const missing = [...new Set(paths)].filter((file) => !fs.existsSync(file))
+          if (!pkg.name || !pkg.version) throw new Error('package name/version is missing')
+          if (missing.length) throw new Error(`missing package entry points: ${missing.join(', ')}`)
+          console.log(`${pkg.name}@${pkg.version}: ${new Set(paths).size} entry points verified`)
+          NODE
+      - name: Verify npm package surface
+        run: npm pack --ignore-scripts --dry-run
